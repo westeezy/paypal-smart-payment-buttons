@@ -241,7 +241,6 @@ function initCheckout({ props, components, serviceData, payment, config } : Init
     const connectEligible = isConnectEligible({ connect, createBillingAgreement, createSubscription, vault, fundingSource });
 
     let approved = false;
-    let orderCreated = false;
     let forceClosed = false;
 
     const init = () => {
@@ -321,7 +320,6 @@ function initCheckout({ props, components, serviceData, payment, config } : Init
                                 clientID, merchantID, buyerCountry, currency, commit, intent, disableFunding, disableCard, userIDToken });
                         }
                     }).then(() => {
-                        orderCreated = true;
                         return orderID;
                     });
                 });
@@ -360,7 +358,7 @@ function initCheckout({ props, components, serviceData, payment, config } : Init
 
             onClose: () => {
                 checkoutOpen = false;
-                if (!forceClosed && !approved && orderCreated) {
+                if (!forceClosed && !approved) {
                     return onCancel();
                 }
             },
