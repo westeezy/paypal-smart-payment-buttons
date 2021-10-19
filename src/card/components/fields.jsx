@@ -41,10 +41,11 @@ type CardFieldProps = {|
     cspNonce : string,
     onChange : ({| value : Card, valid : boolean, errors : [$Values<typeof CARD_ERRORS>] | [] |}) => void,
     styleObject : CardStyle,
-    placeholder : {| number? : string, expiry? : string, cvv? : string  |}
+    placeholder : {| number? : string, expiry? : string, cvv? : string  |},
+    autocomplete? : string
 |};
 
-export function CardField({ cspNonce, onChange, styleObject = {}, placeholder = {} } : CardFieldProps) : mixed {
+export function CardField({ cspNonce, onChange, styleObject = {}, placeholder = {}, autocomplete } : CardFieldProps) : mixed {
     const [ number, setNumber ] = useState('');
     const [ cvv, setCvv ] = useState('');
     const [ expiry, setExpiry ] = useState('');
@@ -99,6 +100,7 @@ export function CardField({ cspNonce, onChange, styleObject = {}, placeholder = 
 
             <CardNumber
                 ref={ numberRef }
+                autocomplete={ autocomplete }
                 navigation={ cardNumberNavivation }
                 type='text'
                 // eslint-disable-next-line react/forbid-component-props
@@ -114,6 +116,7 @@ export function CardField({ cspNonce, onChange, styleObject = {}, placeholder = 
 
             <CardExpiry
                 ref={ expiryRef }
+                autocomplete={ autocomplete }
                 navigation={ cardExpiryNavivation }
                 type='text'
                 // eslint-disable-next-line react/forbid-component-props
@@ -129,6 +132,7 @@ export function CardField({ cspNonce, onChange, styleObject = {}, placeholder = 
 
             <CardCVV
                 ref={ cvvRef }
+                autocomplete={ autocomplete }
                 navigation={ cardCvvNavivation }
                 type='text'
                 cardType={ cardType }
@@ -150,10 +154,11 @@ type CardNumberFieldProps = {|
     cspNonce : string,
     onChange : ({| value : string, valid : boolean |}) => void,
     styleObject : CardStyle,
-   placeholder : {| number? : string, expiry? : string, cvv? : string  |}
+    placeholder : {| number? : string, expiry? : string, cvv? : string  |},
+    autocomplete?: string;
 |};
 
-export function CardNumberField({ cspNonce, onChange, styleObject = {}, placeholder = {} } : CardNumberFieldProps) : mixed {
+export function CardNumberField({ cspNonce, onChange, styleObject = {}, placeholder = {}, autcomplete } : CardNumberFieldProps) : mixed {
     const [ number, setNumber ] = useState('');
     const [ numberValidity, setNumberValidity ] = useState(true);
     const [ generalStyle, inputStyle ] = getStyles(styleObject);
@@ -175,6 +180,7 @@ export function CardNumberField({ cspNonce, onChange, styleObject = {}, placehol
 
             <CardNumber
                 type='text'
+                autocomplete={ autocomplete }
                 // eslint-disable-next-line react/forbid-component-props
                 className={ numberValidity.isPossibleValid ? 'number valid' : 'number invalid' }
                 // eslint-disable-next-line react/forbid-component-props
@@ -192,7 +198,8 @@ type CardExpiryFieldProps = {|
     cspNonce : string,
     onChange : ({| value : string, valid : boolean |}) => void,
     styleObject : CardStyle,
-    placeholder : {| number? : string, expiry? : string, cvv? : string  |}
+    placeholder : {| number? : string, expiry? : string, cvv? : string  |},
+    autocomplete?: string
 |};
 
 export function CardExpiryField({ cspNonce, onChange, styleObject = {}, placeholder = {} } : CardExpiryFieldProps) : mixed {
@@ -216,6 +223,7 @@ export function CardExpiryField({ cspNonce, onChange, styleObject = {}, placehol
 
             <CardExpiry
                 type='text'
+                autocomplete={ autocomplete }
                 // eslint-disable-next-line react/forbid-component-props
                 className={ expiryValidity ? 'expiry valid' : 'expiry invalid' }
                 // eslint-disable-next-line react/forbid-component-props
@@ -232,7 +240,8 @@ type CardCvvFieldProps = {|
     cspNonce : string,
     onChange : ({| value : string, valid : boolean |}) => void,
     styleObject : CardStyle,
-    placeholder : {| number? : string, expiry? : string, cvv? : string  |}
+    placeholder : {| number? : string, expiry? : string, cvv? : string  |},
+    autocomplete?: string
 |};
 
 export function CardCVVField({ cspNonce, onChange, styleObject = {}, placeholder = {} } : CardCvvFieldProps) : mixed {
@@ -256,6 +265,7 @@ export function CardCVVField({ cspNonce, onChange, styleObject = {}, placeholder
 
             <CardCVV
                 type='text'
+                autocomplete={ autocomplete }
                 // eslint-disable-next-line react/forbid-component-props
                 className={ cvvValidity ? 'cvv valid' : 'cvv invalid' }
                 // eslint-disable-next-line react/forbid-component-props

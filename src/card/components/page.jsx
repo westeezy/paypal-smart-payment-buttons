@@ -19,11 +19,15 @@ type PageProps = {|
 |};
 
 function Page({ cspNonce, props } : PageProps) : mixed {
-    const { facilitatorAccessToken, style, placeholder, type, onChange, export: xport } = props;
+    const { facilitatorAccessToken, style, disableAutocomplete, placeholder, type, onChange, export: xport } = props;
 
     const [ fieldValue, setFieldValue ] = useState();
     const [ fieldValid, setFieldValid ] = useState(false);
     const [ fieldErrors, setFieldErrors ] = useState([]);
+    let autocomplete;
+    if (disableAutocomplete) {
+        autocomplete = 'off';
+    }
 
     const getFieldValue = () => {
         return fieldValue;
@@ -91,6 +95,7 @@ function Page({ cspNonce, props } : PageProps) : mixed {
                 (type === CARD_FIELD_TYPE.SINGLE)
                     ? <CardField
                         cspNonce={ cspNonce }
+                        autocomplete={ autocomplete }
                         onChange={ onFieldChange }
                         styleObject={ style }
                         placeholder={ placeholder }
@@ -101,6 +106,7 @@ function Page({ cspNonce, props } : PageProps) : mixed {
                 (type === CARD_FIELD_TYPE.NUMBER)
                     ? <CardNumberField
                         cspNonce={ cspNonce }
+                        autocomplete={ autocomplete }
                         onChange={ onFieldChange }
                         styleObject={ style }
                         placeholder={ placeholder }
@@ -111,6 +117,7 @@ function Page({ cspNonce, props } : PageProps) : mixed {
                 (type === CARD_FIELD_TYPE.CVV)
                     ? <CardCVVField
                         cspNonce={ cspNonce }
+                        autocomplete={ autocomplete }
                         onChange={ onFieldChange }
                         styleObject={ style }
                         placeholder={ placeholder }
@@ -121,6 +128,7 @@ function Page({ cspNonce, props } : PageProps) : mixed {
                 (type === CARD_FIELD_TYPE.EXPIRY)
                     ? <CardExpiryField
                         cspNonce={ cspNonce }
+                        autocomplete={ autocomplete }
                         onChange={ onFieldChange }
                         styleObject={ style }
                         placeholder={ placeholder }
