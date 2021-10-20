@@ -155,10 +155,10 @@ type CardNumberFieldProps = {|
     onChange : ({| value : string, valid : boolean |}) => void,
     styleObject : CardStyle,
     placeholder : {| number? : string, expiry? : string, cvv? : string  |},
-    autocomplete?: string;
+    autocomplete? : string
 |};
 
-export function CardNumberField({ cspNonce, onChange, styleObject = {}, placeholder = {}, autcomplete } : CardNumberFieldProps) : mixed {
+export function CardNumberField({ cspNonce, onChange, styleObject = {}, placeholder = {}, autocomplete } : CardNumberFieldProps) : mixed {
     const [ number, setNumber ] = useState('');
     const [ numberValidity, setNumberValidity ] = useState(true);
     const [ generalStyle, inputStyle ] = getStyles(styleObject);
@@ -199,10 +199,10 @@ type CardExpiryFieldProps = {|
     onChange : ({| value : string, valid : boolean |}) => void,
     styleObject : CardStyle,
     placeholder : {| number? : string, expiry? : string, cvv? : string  |},
-    autocomplete?: string
+    autocomplete? : string
 |};
 
-export function CardExpiryField({ cspNonce, onChange, styleObject = {}, placeholder = {} } : CardExpiryFieldProps) : mixed {
+export function CardExpiryField({ cspNonce, onChange, styleObject = {}, placeholder = {}, autocomplete } : CardExpiryFieldProps) : mixed {
     const [ expiry, setExpiry ] = useState('');
     const [ expiryValidity, setExpiryValidity ] = useState(true);
     const [ generalStyle, inputStyle ] = getStyles(styleObject);
@@ -241,14 +241,14 @@ type CardCvvFieldProps = {|
     onChange : ({| value : string, valid : boolean |}) => void,
     styleObject : CardStyle,
     placeholder : {| number? : string, expiry? : string, cvv? : string  |},
-    autocomplete?: string
+    autocomplete? : string
 |};
 
-export function CardCVVField({ cspNonce, onChange, styleObject = {}, placeholder = {} } : CardCvvFieldProps) : mixed {
+export function CardCVVField({ cspNonce, onChange, styleObject = {}, placeholder = {}, autocomplete } : CardCvvFieldProps) : mixed {
     const [ cvv, setCvv ] = useState('');
     const [ cvvValidity, setCvvValidity ] = useState(true);
     const [ generalStyle, inputStyle ] = getStyles(styleObject);
-    
+
     const composedStyles = { ...{ input: DEFAULT_INPUT_STYLE },  ...generalStyle };
 
     useEffect(() => {

@@ -55,7 +55,7 @@ export type CardProps = {|
     export : CardExport,
     onChange : OnChange,
     facilitatorAccessToken : string,
-    disableAutocomplete?: boolean
+    disableAutocomplete? : boolean
 |};
 
 type GetCardPropsOptions = {|
