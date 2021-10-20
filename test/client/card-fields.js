@@ -132,7 +132,7 @@ describe('card fields cases', () => {
             const container = createCardFieldsContainerHTML();
 
             await mockSetupCardFields();
-          
+
             const card = window.paypal.CardFields(window.xprops);
             card.render(container);
 
@@ -246,7 +246,7 @@ describe('card fields cases', () => {
             const container = createCardFieldsContainerHTML();
 
             await mockSetupCardFields();
-          
+
             const card = window.paypal.CardFields(window.xprops);
             card.render(container);
             await wait();
@@ -345,7 +345,7 @@ describe('card fields cases', () => {
             const container = createCardFieldsContainerHTML();
 
             await mockSetupCardFields();
-          
+
             const card = window.paypal.CardFields(window.xprops);
             card.render(container);
             await wait();
@@ -355,5 +355,38 @@ describe('card fields cases', () => {
 
     });
 
+    it('should turn autocomplete off on fields with `disableAutocomplete`', async () => {
+        return await wrapPromise(async ({ expect }) => {
+            window.xprops.disableAutocomplete = true;
+            window.xprops.type = CARD_FIELD_TYPE.SINGLE;
+
+            const container = createCardFieldsContainerHTML();
+
+            mockFunction(window.paypal, 'CardFields', expect('CardFields', ({ original: CardFieldOriginal, args: [ props ] }) => {
+                const cardFieldInstance = CardFieldOriginal(props);
+                const numberInput = document.getElementsByName('number')[0];
+                const expiryInput = document.getElementsByName('expiry')[0];
+                const cvvInput = document.getElementsByName('cvv')[0];
+
+                if (numberInput.getAttribute('autocomplete') !== 'off') {
+                    throw new Error('Card Number autocomplete is not set to "off"');
+                }
+
+                if (expiryInput.getAttribute('autocomplete') !== 'off') {
+                    throw new Error('Card Expiry autocomplete is not set to "off"');
+                }
+
+                if (cvvInput.getAttribute('autocomplete') !== 'off') {
+                    throw new Error('Card CVV autocomplete is not set to "off"');
+                }
+                return cardFieldInstance;
+            }));
+
+            await mockSetupCardFields();
+
+            const card = window.paypal.CardFields(window.xprops);
+            card.render(container);
+        });
+    });
 
 });
