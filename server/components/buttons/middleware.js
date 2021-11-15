@@ -32,6 +32,10 @@ type BrandedFundingSourceElmoParam = {|
     wallet : Wallet
 |};
 
+type VenmoAppLabelElmoParams = {|
+    buttonSessionID : string
+|};
+
 type ButtonMiddlewareOptions = {|
     logger : LoggerType,
     graphQL : GraphQL,
@@ -50,13 +54,14 @@ type ButtonMiddlewareOptions = {|
     cdn? : boolean,
     isFundingSourceBranded : (req : ExpressRequest, params : BrandedFundingSourceElmoParam) => Promise<boolean>,
     getInstanceLocationInformation : () => InstanceLocationInformation,
-    getSDKLocationInformation : (req : ExpressRequest, env : string) => Promise<SDKLocationInformation>
+    getSDKLocationInformation : (req : ExpressRequest, env : string) => Promise<SDKLocationInformation>,
+    getVenmoAppLabelExperiment? : (req : ExpressRequest, params : VenmoAppLabelElmoParams) => Promise<boolean>,
 |};
 
 export function getButtonMiddleware({
     logger = defaultLogger, content: smartContent, graphQL, getAccessToken, cdn = !isLocalOrTest(),
     getMerchantID, cache, getInlineGuestExperiment = () => Promise.resolve(false), firebaseConfig, tracking,
-    getPersonalizationEnabled = () => false, isFundingSourceBranded, getInstanceLocationInformation, getSDKLocationInformation
+    getPersonalizationEnabled = () => false, isFundingSourceBranded, getInstanceLocationInformation, getSDKLocationInformation, getVenmoAppLabelExperiment = () => Promise.resolve(false)
 } : ButtonMiddlewareOptions = {}) : ExpressMiddleware {
     const useLocal = !cdn;
 
@@ -147,6 +152,7 @@ export function getButtonMiddleware({
             const wallet = await walletPromise;
             const personalization = await personalizationPromise;
             const brandedDefault = await isFundingSourceBranded(req, { clientID, fundingSource, wallet });
+            const venmoAppLabelExperiment = await getVenmoAppLabelExperiment(req, { buttonSessionID });
 
             const eligibility = {
                 cardFields: isCardFieldsExperimentEnabled
@@ -157,7 +163,11 @@ export function getButtonMiddleware({
 
             const buttonProps = {
                 ...params, nonce: cspNonce, csp: { nonce: cspNonce },
-                fundingEligibility, content, wallet, personalization
+                fundingEligibility, content, wallet, personalization,
+                experiment: {
+                    ...params.experiment,
+                    enableVenmoAppLabel: venmoAppLabelExperiment
+                }
             };
 
             try {
