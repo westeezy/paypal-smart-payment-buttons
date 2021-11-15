@@ -55,7 +55,7 @@ type ButtonMiddlewareOptions = {|
     isFundingSourceBranded : (req : ExpressRequest, params : BrandedFundingSourceElmoParam) => Promise<boolean>,
     getInstanceLocationInformation : () => InstanceLocationInformation,
     getSDKLocationInformation : (req : ExpressRequest, env : string) => Promise<SDKLocationInformation>,
-    getVenmoAppLabelExperiment? : (req : ExpressRequest, params : VenmoAppLabelElmoParams) => Promise<boolean>,
+    getVenmoAppLabelExperiment? : (req : ExpressRequest, params : VenmoAppLabelElmoParams) => Promise<boolean>
 |};
 
 export function getButtonMiddleware({
@@ -162,7 +162,7 @@ export function getButtonMiddleware({
             logger.info(req, `button_client_version_${ client.version }`);
 
             const buttonProps = {
-                ...params, nonce: cspNonce, csp: { nonce: cspNonce },
+                ...params, nonce : cspNonce, csp : { nonce: cspNonce },
                 fundingEligibility, content, wallet, personalization,
                 experiment: {
                     ...params.experiment,
