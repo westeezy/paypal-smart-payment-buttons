@@ -162,8 +162,15 @@ export function getButtonMiddleware({
             logger.info(req, `button_client_version_${ client.version }`);
 
             const buttonProps = {
-                ...params, nonce : cspNonce, csp : { nonce: cspNonce },
-                fundingEligibility, content, wallet, personalization,
+                ...params,
+                nonce: cspNonce,
+                csp:   {
+                    nonce: cspNonce
+                },
+                fundingEligibility,
+                content,
+                wallet,
+                personalization,
                 experiment: {
                     ...params.experiment,
                     enableVenmoAppLabel: venmoAppLabelExperiment
