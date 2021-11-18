@@ -5,7 +5,7 @@ import { COUNTRY, LANG, FUNDING, FPTI_KEY } from '@paypal/sdk-constants';
 import { stringifyError, noop } from 'belter';
 
 import { clientErrorResponse, htmlResponse, allowFrame, defaultLogger, safeJSON, sdkMiddleware, type ExpressMiddleware,
-    graphQLBatch, type GraphQL, javascriptResponse, emptyResponse, promiseTimeout, isLocalOrTest } from '../../lib';
+    graphQLBatch, type GraphQL, javascriptResponse, emptyResponse, promiseTimeout, isLocalOrTest, getDefaultExperiments, type GetExperimentsParams, type GetExperimentsType } from '../../lib';
 import { resolveFundingEligibility, resolveMerchantID, resolveWallet, resolvePersonalization } from '../../service';
 import { EXPERIMENT_TIMEOUT, TIMEOUT_ERROR_MESSAGE, FPTI_STATE } from '../../config';
 import type { LoggerType, CacheType, ExpressRequest, FirebaseConfig, InstanceLocationInformation, SDKLocationInformation } from '../../types';
@@ -32,10 +32,6 @@ type BrandedFundingSourceElmoParam = {|
     wallet : Wallet
 |};
 
-type VenmoAppLabelElmoParams = {|
-    buttonSessionID : string
-|};
-
 type ButtonMiddlewareOptions = {|
     logger : LoggerType,
     graphQL : GraphQL,
@@ -55,13 +51,13 @@ type ButtonMiddlewareOptions = {|
     isFundingSourceBranded : (req : ExpressRequest, params : BrandedFundingSourceElmoParam) => Promise<boolean>,
     getInstanceLocationInformation : () => InstanceLocationInformation,
     getSDKLocationInformation : (req : ExpressRequest, env : string) => Promise<SDKLocationInformation>,
-    getVenmoAppLabelExperiment? : (req : ExpressRequest, params : VenmoAppLabelElmoParams) => Promise<boolean>
+    getExperiments? : (req : ExpressRequest, params : GetExperimentsParams) => Promise<GetExperimentsType>
 |};
 
 export function getButtonMiddleware({
     logger = defaultLogger, content: smartContent, graphQL, getAccessToken, cdn = !isLocalOrTest(),
     getMerchantID, cache, getInlineGuestExperiment = () => Promise.resolve(false), firebaseConfig, tracking,
-    getPersonalizationEnabled = () => false, isFundingSourceBranded, getInstanceLocationInformation, getSDKLocationInformation, getVenmoAppLabelExperiment = () => Promise.resolve(false)
+    getPersonalizationEnabled = () => false, isFundingSourceBranded, getInstanceLocationInformation, getSDKLocationInformation, getExperiments = getDefaultExperiments
 } : ButtonMiddlewareOptions = {}) : ExpressMiddleware {
     const useLocal = !cdn;
 
@@ -152,7 +148,7 @@ export function getButtonMiddleware({
             const wallet = await walletPromise;
             const personalization = await personalizationPromise;
             const brandedDefault = await isFundingSourceBranded(req, { clientID, fundingSource, wallet });
-            const venmoAppLabelExperiment = await getVenmoAppLabelExperiment(req, { buttonSessionID });
+            const experiments = await getExperiments(req, { buttonSessionID });
 
             const eligibility = {
                 cardFields: isCardFieldsExperimentEnabled
@@ -173,7 +169,7 @@ export function getButtonMiddleware({
                 personalization,
                 experiment: {
                     ...params.experiment,
-                    enableVenmoAppLabel: venmoAppLabelExperiment
+                    ...experiments
                 }
             };
 
