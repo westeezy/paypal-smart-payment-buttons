@@ -1,7 +1,7 @@
 /* @flow */
 
 import { html } from 'jsx-pragmatic';
-import { COUNTRY, LANG, FUNDING, FPTI_KEY } from '@paypal/sdk-constants';
+import { COUNTRY, LANG, FPTI_KEY } from '@paypal/sdk-constants';
 import { stringifyError, noop } from 'belter';
 
 import { clientErrorResponse, htmlResponse, allowFrame, defaultLogger, safeJSON, sdkMiddleware, type ExpressMiddleware,
@@ -9,7 +9,7 @@ import { clientErrorResponse, htmlResponse, allowFrame, defaultLogger, safeJSON,
 import { resolveFundingEligibility, resolveMerchantID, resolveWallet, resolvePersonalization } from '../../service';
 import { EXPERIMENT_TIMEOUT, TIMEOUT_ERROR_MESSAGE, FPTI_STATE } from '../../config';
 import type { LoggerType, CacheType, ExpressRequest, FirebaseConfig, InstanceLocationInformation, SDKLocationInformation } from '../../types';
-import type { ContentType, Wallet } from '../../../src/types';
+import type { ContentType } from '../../../src/types';
 
 import { getSmartPaymentButtonsClientScript, getPayPalSmartPaymentButtonsRenderScript } from './script';
 import { getButtonParams, getButtonPreflightParams } from './params';
@@ -179,7 +179,7 @@ export function getButtonMiddleware({
             const setupParams = {
                 fundingEligibility, buyerCountry, cspNonce, merchantID, sdkMeta, wallet, correlationID,
                 firebaseConfig, facilitatorAccessToken, eligibility, content, cookies, personalization,
-                brandedDefault : experiments.isFundingSourceBranded
+                brandedDefault: experiments.isFundingSourceBranded
             };
 
             const pageHTML = `

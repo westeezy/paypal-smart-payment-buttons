@@ -1,6 +1,7 @@
 /* @flow */
 
 import { FUNDING } from '@paypal/sdk-constants';
+
 import type { Wallet } from '../../src/types';
 
 export type GetExperimentsParams = {|
@@ -17,7 +18,7 @@ export type GetExperimentsType = {|
 
 export function getDefaultExperiments() : Promise<GetExperimentsType> {
     return Promise.resolve({
-        enableVenmoAppLabel: false,
+        enableVenmoAppLabel:    false,
         isFundingSourceBranded: false
     });
 }
