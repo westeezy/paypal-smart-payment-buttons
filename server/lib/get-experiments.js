@@ -19,12 +19,14 @@ export type GetExperimentsParams = {|
 
 export type GetExperimentsType = {|
     enableVenmoAppLabel : boolean,
-    isFundingSourceBranded : boolean
+    isFundingSourceBranded : boolean,
+    isCardFieldsExperimentEnabled : boolean
 |};
 
 export function getDefaultExperiments() : Promise<GetExperimentsType> {
     return Promise.resolve({
-        enableVenmoAppLabel:    false,
-        isFundingSourceBranded: false
+        enableVenmoAppLabel:           false,
+        isFundingSourceBranded:        false,
+        isCardFieldsExperimentEnabled: false
     });
 }
