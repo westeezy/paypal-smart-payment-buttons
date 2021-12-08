@@ -86,7 +86,7 @@ export function getButtonMiddleware({
             const merchantIDPromise = facilitatorAccessTokenPromise.then(facilitatorAccessToken => resolveMerchantID(req, { merchantID: sdkMerchantID, getMerchantID, facilitatorAccessToken }));
             const clientPromise = getSmartPaymentButtonsClientScript({ debug, logBuffer, cache, useLocal, locationInformation });
             const renderPromise = getPayPalSmartPaymentButtonsRenderScript({ logBuffer, cache, useLocal, locationInformation, sdkLocationInformation });
-
+            
             const isCardFieldsExperimentEnabledPromise = promiseTimeout(
                 merchantIDPromise.then(merchantID =>
                     getInlineGuestExperiment(req, { merchantID: merchantID[0], locale, buttonSessionID, buyerCountry })),
@@ -140,7 +140,7 @@ export function getButtonMiddleware({
             const isCardFieldsExperimentEnabled = await isCardFieldsExperimentEnabledPromise;
             const wallet = await walletPromise;
             const personalization = await personalizationPromise;
-            const experiments = await getExperiments(req, { buttonSessionID, clientID, fundingSource, wallet });
+            const experiments = await getExperiments(req, { buttonSessionID, clientID, fundingSource, wallet, merchantID: merchantID[0], locale, buyerCountry  });
 
             const eligibility = {
                 cardFields: isCardFieldsExperimentEnabled
