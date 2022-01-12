@@ -2400,7 +2400,7 @@
             }), children));
         }
         function callGraphQL(_ref5) {
-            var name = _ref5.name, _ref5$variables = _ref5.variables, _ref5$headers = _ref5.headers, _ref5$returnErrorObje = _ref5.returnErrorObject, returnErrorObject = void 0 !== _ref5$returnErrorObje && _ref5$returnErrorObje;
+            var name = _ref5.name, _ref5$variables = _ref5.variables, _ref5$headers = _ref5.headers;
             return request({
                 url: "/graphql?" + name,
                 method: "POST",
@@ -2419,7 +2419,6 @@
                     getLogger().warn("graphql_" + name + "_error", {
                         err: message
                     });
-                    if (returnErrorObject) throw errors[0];
                     throw new Error(message);
                 }
                 if (200 !== status) {
@@ -2429,6 +2428,29 @@
                 return body.data;
             }));
         }
+        memoize((function(orderID) {
+            var _headers21;
+            return callGraphQL({
+                name: "GetCheckoutDetails",
+                query: "\n            query GetCheckoutDetails($orderID: String!) {\n                checkoutSession(token: $orderID) {\n                    cart {\n                        billingType\n                        intent\n                        paymentId\n                        billingToken\n                        amounts {\n                            total {\n                                currencyValue\n                                currencyCode\n                                currencyFormatSymbolISOCurrency\n                            }\n                        }\n                        supplementary {\n                            initiationIntent\n                        }\n                        category\n                    }\n                    flags {\n                        isChangeShippingAddressAllowed\n                    }\n                    payees {\n                        merchantId\n                        email {\n                            stringValue\n                        }\n                    }\n                }\n            }\n        ",
+                variables: {
+                    orderID: orderID
+                },
+                headers: (_headers21 = {}, _headers21["paypal-client-context"] = orderID, _headers21)
+            });
+        }));
+        memoize((function(config) {
+            return promise_ZalgoPromise.try((function() {
+                if (!window.firebase || !window.firebase.auth || !window.firebase.database) return loadScript("https://www.paypalobjects.com/checkout/js/lib/firebase-app.js").then((function() {
+                    return promise_ZalgoPromise.all([ loadScript("https://www.paypalobjects.com/checkout/js/lib/firebase-auth.js"), loadScript("https://www.paypalobjects.com/checkout/js/lib/firebase-database.js") ]);
+                }));
+            })).then((function() {
+                var firebase = window.firebase;
+                if (!firebase) throw new Error("Firebase failed to load");
+                firebase.initializeApp(config);
+                return firebase;
+            }));
+        }));
         var _FRAUDNET_URL;
         var FRAUDNET_URL = ((_FRAUDNET_URL = {}).local = "https://www.stage2d0107.stage.paypal.com/FDRegression/fb.js", 
         _FRAUDNET_URL.stage = "https://www.stage2d0107.stage.paypal.com/FDRegression/fb.js", 
@@ -2460,29 +2482,6 @@
                 var body = util_getBody();
                 body.appendChild(configScript);
                 body.appendChild(fraudnetScript);
-            }));
-        }));
-        memoize((function(orderID) {
-            var _headers21;
-            return callGraphQL({
-                name: "GetCheckoutDetails",
-                query: "\n            query GetCheckoutDetails($orderID: String!) {\n                checkoutSession(token: $orderID) {\n                    cart {\n                        billingType\n                        intent\n                        paymentId\n                        billingToken\n                        amounts {\n                            total {\n                                currencyValue\n                                currencyCode\n                                currencyFormatSymbolISOCurrency\n                            }\n                        }\n                        supplementary {\n                            initiationIntent\n                        }\n                        category\n                    }\n                    flags {\n                        isChangeShippingAddressAllowed\n                    }\n                    payees {\n                        merchantId\n                        email {\n                            stringValue\n                        }\n                    }\n                }\n            }\n        ",
-                variables: {
-                    orderID: orderID
-                },
-                headers: (_headers21 = {}, _headers21["paypal-client-context"] = orderID, _headers21)
-            });
-        }));
-        memoize((function(config) {
-            return promise_ZalgoPromise.try((function() {
-                if (!window.firebase || !window.firebase.auth || !window.firebase.database) return loadScript("https://www.paypalobjects.com/checkout/js/lib/firebase-app.js").then((function() {
-                    return promise_ZalgoPromise.all([ loadScript("https://www.paypalobjects.com/checkout/js/lib/firebase-auth.js"), loadScript("https://www.paypalobjects.com/checkout/js/lib/firebase-database.js") ]);
-                }));
-            })).then((function() {
-                var firebase = window.firebase;
-                if (!firebase) throw new Error("Firebase failed to load");
-                firebase.initializeApp(config);
-                return firebase;
             }));
         }));
         memoize((function(_ref) {
@@ -3132,7 +3131,7 @@
             logger.addTrackingBuilder((function() {
                 var _ref2;
                 return (_ref2 = {}).state_name = "smart_button", _ref2.context_type = "EC-Token", 
-                _ref2.context_id = orderID, _ref2.button_session_id = buttonSessionID, _ref2.button_version = "5.0.77", 
+                _ref2.context_id = orderID, _ref2.button_session_id = buttonSessionID, _ref2.button_version = "5.0.76", 
                 _ref2.user_id = buttonSessionID, _ref2;
             }));
             (function() {
@@ -3271,7 +3270,7 @@
                         }));
                     }
                 });
-            }(), state = _useXProps.state, errorText = _useXProps.errorText, setState = _useXProps.setState, close = _useXProps.close, cancel = _useXProps.onCancel;
+            }(), state = _useXProps.state, errorText = _useXProps.errorText, setState = _useXProps.setState, close = _useXProps.close;
             var survey = function() {
                 var _useState = hooks_module_l({
                     isEnabled: !1,
@@ -3364,15 +3363,15 @@
                 }));
             };
             var onCloseClick = function() {
-                if ("qr_default" !== state) cancel(); else if (survey.isEnabled) {
+                if ("qr_default" !== state) close(); else if (survey.isEnabled) {
                     var _logger$info$track;
                     qrcard_logger.info("VenmoDesktopPay_qrcode_survey").track((_logger$info$track = {}, 
                     _logger$info$track.state_name = "smart_button", _logger$info$track.context_type = "EC-Token", 
                     _logger$info$track.context_id = window.xprops.orderID, _logger$info$track.transition_name = "desktop_exit_survey_selection_submitted", 
                     _logger$info$track.desktop_exit_survey_reason = survey.reason, _logger$info$track)).flush();
-                    cancel();
+                    close();
                 }
-                return cancel();
+                return close();
             };
             var errorMessage = v(ErrorMessage, {
                 message: errorText,
